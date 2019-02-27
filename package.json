@@ -1,0 +1,32 @@
+{
+  "name": "auth-ii",
+  "version": "1.0.0",
+  "description": "- Authentication.\r - Express Middleware.\r - JSON Web Tokens (JWTs).\r - Hashing Passwords.",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express-session": "^1.15.6",
+    "express": "^4.16.4",
+    "helmet": "^3.15.1",
+    "jsonwebtoken": "^8.5.0",
+    "knex": "^0.16.3",
+    "nodejs": "^0.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10",
+	  "create-react-app": "^2.1.5"
+	  },
+  "scripts": {
+    "server": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ltrii/auth-ii.git"
+  },
+  "author": "ltrii",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ltrii/auth-ii/issues"
+  },
+  "homepage": "https://github.com/ltrii/auth-ii#readme"
+}
