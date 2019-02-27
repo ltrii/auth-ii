@@ -1,42 +1,48 @@
+require('dotenv').config();
+
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const session = require('express-session');
-const KnexSessionStore = require('connect-session-knex')(session);
+// const session = require('express-session');
+// const KnexSessionStore = require('connect-session-knex')(session);
 
 const db = require('./data/dbConfig.js');
 const Users = require('./models/usersModel.js');
 
+const jwt = require('jsonwebtoken');
+
+const secret =
+  process.env.JWT_SECRET || 'add a third table for many to many relationships';
 
 const server = express();
 
 
-const sessionConfig = {
-  name: 'denizen',
-  secret: 'a big secret',
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
-    secure: false, // for HTTPS
-  },
-  httpOnly: true, 
-  resave: false,
-  saveUninitialized: false, // GDPR 
+// const sessionConfig = {
+//   name: 'denizen',
+//   secret: 'a big secret',
+//   cookie: {
+//     maxAge: 24 * 60 * 60 * 1000, // 1 day
+//     secure: false, // for HTTPS
+//   },
+//   httpOnly: true, 
+//   resave: false,
+//   saveUninitialized: false, // GDPR 
 
-  store: new KnexSessionStore({
-    knex: db,
-    tablename: 'sessions',
-    sidfieldname: 'sid',
-    createtable: true,
-    clearInterval: 24 * 60 * 60 * 1000, // in ms
-  }),
-};
+//   store: new KnexSessionStore({
+//     knex: db,
+//     tablename: 'sessions',
+//     sidfieldname: 'sid',
+//     createtable: true,
+//     clearInterval: 24 * 60 * 60 * 1000, // in ms
+//   }),
+// };
 
 
 server.use(helmet());
 server.use(express.json());
 server.use(cors());
-server.use(session(sessionConfig));
+// server.use(session(sessionConfig));
 
 //ROUTES
 
@@ -60,6 +66,21 @@ server.get('/', (req, res) => {
       });
   });
   
+  function generateToken(user) {
+    const payload = {
+      subject: user.id, // sub in payload is what the token is about
+      username: user.username,
+      roles: ['Student'],
+      // ...otherData
+    };
+  
+    const options = {
+      expiresIn: '1d',
+    };
+  
+    return jwt.sign(payload, secret, options);
+  }
+  
   server.post('/api/login', (req, res) => {
     let { username, password } = req.body;
   
@@ -67,10 +88,13 @@ server.get('/', (req, res) => {
       .first()
       .then(user => {
         if (user && bcrypt.compareSync(password, user.password)) {
-          req.session.user = user; 
-          res
-            .status(200)
-            .json({ message: `Welcome ${user.username}!` });
+          const token = generateToken(user); // new
+          res.status(200).json({
+            message: `Welcome ${user.username}!, have a token...`,
+            token,
+            secret,
+            roles: token.roles,
+          });
         } else {
           res.status(401).json({ message: 'Invalid Credentials' });
         }
@@ -79,36 +103,68 @@ server.get('/', (req, res) => {
         res.status(500).json(error);
       });
   });
-  
+
+
   function restricted(req, res, next) {
-    if (req.session && req.session.user) {
-      next();
+    const token = req.headers.authorization;
+  
+    if (token) {
+      // is it valid?
+      jwt.verify(token, secret, (err, decodedToken) => {
+        if (err) {
+          // record the event
+          res.status(401).json({ you: "can't touch this!" });
+        } else {
+          req.decodedJwt = decodedToken;
+          next();
+        }
+      });
     } else {
-      res.status(401).json({ message: 'You shall not pass!' });
+      res.status(401).json({ you: 'shall not pass!' });
     }
   }
   
-  // axios.get(url, {headers: { username, password }})
+  function checkRole(role) {
+    return function(req, res, next) {
+      if (req.decodedJwt.roles && req.decodedJwt.roles.includes(role)) {
+        next();
+      } else {
+        res.status(403).json({ you: 'you have no power here!' });
+      }
+    };
+  }
   
-  server.get('/api/users', restricted, (req, res) => {
+  server.get('/api/users', restricted, checkRole('Student'), (req, res) => {
     Users.find()
       .then(users => {
-        res.json(users);
+        res.json({ users, decodedToken: req.decodedJwt });
       })
       .catch(err => res.send(err));
   });
-
-  server.get('/api/logout', restricted, (req, res) => {
-    if (req.session) {
-      req.session.destroy(err => {
-        if (err) {
-          res.send('error logging out');
-        } else {
-          res.send('good bye');
-        }
-      });
+  
+  // axios.get(url, {headers: { username, password }})
+  
+  server.get('/users', restricted, async (req, res) => {
+    try {
+      const users = await Users.find();
+  
+      res.json(users);
+    } catch (error) {
+      res.send(error);
     }
-  });  
+  });
+
+//   server.get('/api/logout', restricted, (req, res) => {
+//     if (req.session) {
+//       req.session.destroy(err => {
+//         if (err) {
+//           res.send('error logging out');
+//         } else {
+//           res.send('good bye');
+//         }
+//       });
+//     }
+//   });  
 
 //SERVER
 
