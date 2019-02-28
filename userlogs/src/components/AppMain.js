@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import '../App.css';
 
 import { connect } from 'react-redux';
-import { registerUser, loginUser, getUsers } from '../actions';
+import { registerUser, loginUser, getUsers, logOutAction } from '../actions';
 import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
 import UserDisplay from './UserDisplay';
@@ -17,6 +17,12 @@ class AppMain extends Component {
     }
 
     this.refreshPage = this.refreshPage.bind(this)
+  }
+
+  componentWillUpdate(prevProps){
+    if(this.props.loggedin !== prevProps.loggedin){
+      this.refreshPage();
+    }
   }
 
   refreshPage(){
@@ -35,7 +41,7 @@ class AppMain extends Component {
     } else {
       return (
         <div>
-        <LogoutButton refreshPage={this.refreshPage} />
+        <LogoutButton refreshPage={this.refreshPage} logOutAction={this.props.logOutAction} />
         <UserDisplay users={this.props.users} getUsers={this.props.getUsers} />
         </div>
       )
@@ -58,8 +64,9 @@ const mapStateToProps = state => {
     registerUser: state.userReducer.registerUser,
     loginUser: state.userReducer.loginUser,
     getUsers: state.userReducer.getUsers,
-    users: state.userReducer.users
+    users: state.userReducer.users,
+    loggedin: state.userReducer.loggedin
   };
 };
 
-export default connect(mapStateToProps, { registerUser, loginUser, getUsers })(AppMain);
+export default connect(mapStateToProps, { registerUser, loginUser, getUsers, logOutAction })(AppMain);

@@ -3,8 +3,10 @@ import { REGISTER_USER,
          LOGIN_USER,
          USER_LOGIN,
          GET_USERS,
-         USER_PULL
+         USER_PULL,
+         LOG_OUT
          } from '../actions';
+
 
 const initialState = {
     error: null
@@ -30,6 +32,7 @@ export const userReducer = (state = initialState, action) => {
         case USER_LOGIN:
             return {
                 ...state,
+                loggedin: true,
                 error: ''
             };
         case GET_USERS:
@@ -41,6 +44,12 @@ export const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 users: action.payload,
+                error: ''
+            }
+        case LOG_OUT:
+            return {
+                ...state,
+                loggedin: false,
                 error: ''
             }
         default:

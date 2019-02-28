@@ -3,6 +3,7 @@ import { Button } from 'reactstrap';
 
 export default class LogoutButton extends Component {
   logout = () => {
+    this.props.logOutAction();
     localStorage.removeItem('jwt');
     this.props.refreshPage();
  }

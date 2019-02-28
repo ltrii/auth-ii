@@ -6,6 +6,7 @@ export const LOGIN_USER = 'LOGIN_USER';
 export const USER_LOGIN = 'USER_LOGIN';
 export const GET_USERS = 'GET_USERS';
 export const USER_PULL = 'USER_PULL';
+export const LOG_OUT = 'LOG_OUT';
 
 export const registerUser = (newUser) => dispatch => {
     dispatch({ type: REGISTER_USER });
@@ -43,6 +44,9 @@ export const getUsers = (jwt) => dispatch => {
         .catch(err => console.log('get users error'))
 }
 
+export const logOutAction = () => dispatch => {
+    dispatch({ type: LOG_OUT });
+}
 // export const savingFriends = (friend) => dispatch => {
 //     dispatch({ type: SAVING_FRIENDS });
 //     Axios

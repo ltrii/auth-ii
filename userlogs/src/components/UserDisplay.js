@@ -21,7 +21,7 @@ export default class UserDisplay extends Component {
       <div className="userHold">
         {this.state.users.map((user, index) => (
             <Card>
-                {user}
+                {user.username}
             </Card>
         ))}
       </div>

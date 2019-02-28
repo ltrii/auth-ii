@@ -7,6 +7,7 @@ export default class RegisterForm extends Component {
     this.state = {
       curName: '',
       curPassword: '',
+      curDepartment: '',
       modal: false
     }
 
@@ -30,12 +31,14 @@ export default class RegisterForm extends Component {
     e.preventDefault();
     let newUser = {
       username: this.state.curName,
-      password: this.state.curPassword
+      password: this.state.curPassword,
+      department: this.state.curDepartment
     }
     this.props.registerUser(newUser);
     this.setState({
       curName: '',
       curPassword: '',
+      curDepartment: '',
       modal: false
     })
   }
@@ -59,6 +62,7 @@ export default class RegisterForm extends Component {
             <FormGroup>
               <Input required onChange={this.handleChange} type="text" placeholder="Username" name="curName" value={this.state.curName} />
               <Input required onChange={this.handleChange} type="password" placeholder="Password" name="curPassword" value={this.state.curPassword} />
+              <Input required onChange={this.handleChange} type="text" placeholder="Department" name="curDepartment" value={this.state.curDepartment} />
             </FormGroup>
             <Button>Submit</Button>
           </Form>
