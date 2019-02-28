@@ -3,40 +3,51 @@ import React, { Component } from 'react'
 import '../App.css';
 
 import { connect } from 'react-redux';
-import { registerUser, loginUser } from '../actions';
+import { registerUser, loginUser, getUsers } from '../actions';
 import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
+import UserDisplay from './UserDisplay';
+import LogoutButton from './LogoutButton';
 
 class AppMain extends Component {
   constructor(props){
     super(props);
     this.state = {
-      initialized: false
+      refresh: false
+    }
+
+    this.refreshPage = this.refreshPage.bind(this)
+  }
+
+  refreshPage(){
+    this.setState({refresh: !this.state.refresh})
+    console.log('refresh called')
+  }
+
+  showButtons(){
+    if(!localStorage.getItem('jwt')){
+      return (
+        <div className="topButtons">
+        <RegisterForm registerUser={this.props.registerUser} />
+        <LoginForm loginUser={this.props.loginUser} refreshPage={this.refreshPage} />
+        </div>
+      )
+    } else {
+      return (
+        <div>
+        <LogoutButton refreshPage={this.refreshPage} />
+        <UserDisplay users={this.props.users} getUsers={this.props.getUsers} />
+        </div>
+      )
     }
   }
 
-  componentDidMount(){
-    if(!this.state.initialized){
-      // this.props.fetchingLogs();
-      }
-      this.setState({
-        initialized: true
-  })
-  }
-
-  componentDidUpdate(){
-    localStorage.setItem('token', this.props.token)
-    localStorage.setItem('secret', this.props.secret)
-  }
 
   render() {
     return (
       <div className='mainApp'>
       <h1 className='headerText'>Userlogs</h1>
-        <div class="topButtons">
-          <RegisterForm registerUser={this.props.registerUser} />
-          <LoginForm loginUser={this.props.loginUser} token={this.props.token} secret={this.props.secret} />
-        </div>
+        {this.showButtons()}
       </div>
     )
   }
@@ -46,9 +57,9 @@ const mapStateToProps = state => {
   return {
     registerUser: state.userReducer.registerUser,
     loginUser: state.userReducer.loginUser,
-    token: state.userReducer.token,
-    secret: state.userReducer.secret
+    getUsers: state.userReducer.getUsers,
+    users: state.userReducer.users
   };
 };
 
-export default connect(mapStateToProps, { registerUser, loginUser })(AppMain);
+export default connect(mapStateToProps, { registerUser, loginUser, getUsers })(AppMain);

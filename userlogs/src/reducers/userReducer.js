@@ -1,7 +1,9 @@
 import { REGISTER_USER,
          USER_REGISTERED,
          LOGIN_USER,
-         USER_LOGIN
+         USER_LOGIN,
+         GET_USERS,
+         USER_PULL
          } from '../actions';
 
 const initialState = {
@@ -28,10 +30,19 @@ export const userReducer = (state = initialState, action) => {
         case USER_LOGIN:
             return {
                 ...state,
-                token: action.payload.token,
-                secret: action.payload.secret,
                 error: ''
             };
+        case GET_USERS:
+            return {
+                ...state,
+                error: ''
+            }
+        case USER_PULL:
+            return {
+                ...state,
+                users: action.payload,
+                error: ''
+            }
         default:
             return state;
         }

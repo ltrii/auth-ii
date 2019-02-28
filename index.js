@@ -70,7 +70,7 @@ server.post('/api/register', (req, res) => {
     const payload = {
       subject: user.id, // sub in payload is what the token is about
       username: user.username,
-      roles: ['Student'],
+      department: ['Student'],
       // ...otherData
     };
   
@@ -93,7 +93,7 @@ server.post('/api/register', (req, res) => {
             message: `Welcome ${user.username}!, have a token...`,
             token,
             secret,
-            roles: token.roles,
+            department: token.department,
           });
         } else {
           res.status(401).json({ message: 'Invalid Credentials' });
@@ -124,9 +124,9 @@ server.post('/api/register', (req, res) => {
     }
   }
   
-  function checkRole(role) {
+  function checkDepart(depart) {
     return function(req, res, next) {
-      if (req.decodedJwt.roles && req.decodedJwt.roles.includes(role)) {
+      if (req.decodedJwt.department && req.decodedJwt.department.includes(depart)) {
         next();
       } else {
         res.status(403).json({ you: 'you have no power here!' });
@@ -134,7 +134,7 @@ server.post('/api/register', (req, res) => {
     };
   }
   
-  server.get('/api/users', restricted, checkRole('Student'), (req, res) => {
+  server.get('/api/users', restricted, checkDepart('Student'), (req, res) => {
     Users.find()
       .then(users => {
         res.json({ users, decodedToken: req.decodedJwt });

@@ -12,3 +12,12 @@
     display: flex;
     justify-content: space-between;
 }
+
+.modalHold {
+    padding: 20px;
+}
+
+.modalHold .modalInput {
+    margin: 10px 0px;
+    padding: 5px;
+}

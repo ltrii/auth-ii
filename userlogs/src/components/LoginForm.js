@@ -29,6 +29,7 @@ export default class LoginForm extends Component {
     this.setState({
       modal: false
     })
+    this.props.refreshPage();
   }
 
   
@@ -41,16 +42,19 @@ export default class LoginForm extends Component {
 
   render() {
     return (
-      <div className="addFriendDiv">
+      <div className="loginDiv">
         <Button color="primary" onClick={this.toggle}>Login</Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-        <Form onSubmit={e => this.handleSubmit(e)}>
-          <FormGroup>
-            <Input required onChange={this.handleChange} type="text" placeholder="Username" name="curName" value={this.state.curName} />
-            <Input required onChange={this.handleChange} type="password" placeholder="Password" name="curPassword" value={this.state.curPassword} />
-          </FormGroup>
-          <Button>Submit</Button>
-        </Form>
+        <div className="modalHold">
+          <h2>Log In</h2>
+          <Form onSubmit={e => this.handleSubmit(e)}>
+            <FormGroup>
+              <Input className="modalInput" required onChange={this.handleChange} type="text" placeholder="Username" name="curName" value={this.state.curName} />
+              <Input className="modalInput" required onChange={this.handleChange} type="password" placeholder="Password" name="curPassword" value={this.state.curPassword} />
+            </FormGroup>
+            <Button>Submit</Button>
+          </Form>
+        </div>
         </Modal>
       </div>
     )

@@ -50,16 +50,19 @@ export default class RegisterForm extends Component {
 
   render() {
     return (
-      <div className="addFriendDiv">
+      <div className="registerDiv">
         <Button color="primary" onClick={this.toggle}>Register</Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-        <Form onSubmit={e => this.handleSubmit(e)}>
-          <FormGroup>
-            <Input required onChange={this.handleChange} type="text" placeholder="Username" name="curName" value={this.state.curName} />
-            <Input required onChange={this.handleChange} type="password" placeholder="Password" name="curPassword" value={this.state.curPassword} />
-          </FormGroup>
-          <Button>Submit</Button>
-        </Form>
+        <div className="modalHold">
+        <h2>Register</h2>
+          <Form onSubmit={e => this.handleSubmit(e)}>
+            <FormGroup>
+              <Input required onChange={this.handleChange} type="text" placeholder="Username" name="curName" value={this.state.curName} />
+              <Input required onChange={this.handleChange} type="password" placeholder="Password" name="curPassword" value={this.state.curPassword} />
+            </FormGroup>
+            <Button>Submit</Button>
+          </Form>
+        </div>
         </Modal>
       </div>
     )
