@@ -15,11 +15,11 @@ export default class UserDisplay extends Component {
   render() {
     return (
       <div className="userHold">
-        {/* {this.props.users.map((user, index) => (
+        {this.props.users !== undefined && this.props.users.map((user, index) => (
             <Card>
                 {user.username}
             </Card>
-        ))} */}
+        ))}
       </div>
     )
   }
