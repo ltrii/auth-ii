@@ -42,7 +42,7 @@ class AppMain extends Component {
       return (
         <div>
         <LogoutButton refreshPage={this.refreshPage} logOutAction={this.props.logOutAction} />
-        <UserDisplay users={this.props.users} getUsers={this.props.getUsers} />
+        <UserDisplay refreshPage={this.refreshPage} users={this.props.users} getUsers={this.props.getUsers} />
         </div>
       )
     }
